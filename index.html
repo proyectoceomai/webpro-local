@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Crea tu sitio web profesional en minutos. Para electricistas, plomeros, agentes inmobiliarios.">
     <title>WebPro Local - Sitios Web para Profesionales</title>
     <style>
         * {
@@ -211,7 +212,8 @@
     
     <script src="https://js.stripe.com/v3/"></script>
     <script>
-        const stripe = Stripe('pk_test_51234567890abcdefghijklmnop');
+        // Stripe Sandbox/Test Mode - CONFIGURAR CON VARIABLE DE ENTORNO EN PRODUCCIÓN
+        const stripe = Stripe(window.STRIPE_PUBLIC_KEY || 'pk_test_demo');
         
         function validateForm() {
             const name = document.getElementById('name').value;
@@ -233,7 +235,7 @@
         }
         
         function initStripe(plan) {
-            const priceId = plan === 'basic' ? 'price_1234567890abc' : 'price_0987654321xyz';
+            const customer = JSON.parse(localStorage.getItem('customer') || '{}');
             
             fetch('/create-checkout-session', {
                 method: 'POST',
@@ -241,20 +243,26 @@
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    priceId: priceId,
-                    customer: localStorage.getItem('customer')
+                    plan: plan,
+                    email: customer.email,
+                    name: customer.name
                 })
             })
             .then(res => res.json())
             .then(data => {
-                if(data.sessionId) {
-                    stripe.redirectToCheckout({sessionId: data.sessionId});
+                if(data.url) {
+                    // Redirigir a Stripe Checkout
+                    window.location.href = data.url;
+                } else if(data.error) {
+                    alert('Error: ' + data.error);
                 } else {
-                    console.log('Demo mode: Stripe checkout would open here');
-                    alert('Checkout iniciado (Demo: sin Stripe configurado aún)');
+                    alert('Error: No session ID received');
                 }
             })
-            .catch(err => console.log('Error:', err));
+            .catch(err => {
+                console.error('Error:', err);
+                alert('Error al conectar con Stripe');
+            });
         }
         
         // Analytics básico

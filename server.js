@@ -3,7 +3,8 @@ const url = require('url');
 const fs = require('fs');
 const path = require('path');
 
-const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || 'sk_test_demo';
+// Stripe Test Mode Secret Key - USAR VARIABLE DE ENTORNO
+const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || 'sk_test_DEMO_MODE';
 
 const server = http.createServer((req, res) => {
   const parsedUrl = url.parse(req.url, true);
@@ -39,12 +40,64 @@ const server = http.createServer((req, res) => {
         const data = JSON.parse(body);
         console.log('Checkout requested for:', data);
 
-        // Demo response - en producción, aquí se crearía sesión real en Stripe
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({
-          sessionId: 'cs_test_' + Math.random().toString(36).substr(2, 9),
-          status: 'demo'
-        }));
+        // Stripe API call to create checkout session
+        const postData = JSON.stringify({
+          payment_method_types: ['card'],
+          line_items: [{
+            price_data: {
+              currency: 'eur',
+              product_data: {
+                name: 'WebPro Local - Plan Básico',
+                description: 'Sitio web profesional para tu negocio'
+              },
+              unit_amount: 2000 // $20 en centavos
+            },
+            quantity: 1
+          }],
+          mode: 'subscription',
+          success_url: 'https://webpro-local.vercel.app?session_id={CHECKOUT_SESSION_ID}',
+          cancel_url: 'https://webpro-local.vercel.app',
+          customer_email: data.email || 'cliente@webpro.local'
+        });
+
+        const stripeReq = require('https').request(
+          {
+            hostname: 'api.stripe.com',
+            path: '/v1/checkout/sessions',
+            method: 'POST',
+            headers: {
+              'Authorization': 'Bearer ' + STRIPE_SECRET_KEY,
+              'Content-Type': 'application/x-www-form-urlencoded',
+              'Content-Length': Buffer.byteLength(postData)
+            }
+          },
+          (stripeRes) => {
+            let responseData = '';
+            stripeRes.on('data', chunk => { responseData += chunk; });
+            stripeRes.on('end', () => {
+              try {
+                const sessionData = JSON.parse(responseData);
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({
+                  sessionId: sessionData.id,
+                  url: sessionData.url
+                }));
+              } catch (e) {
+                res.writeHead(500);
+                res.end(JSON.stringify({ error: 'Stripe error: ' + e.message }));
+              }
+            });
+          }
+        );
+
+        stripeReq.on('error', (e) => {
+          console.error('Stripe API error:', e);
+          res.writeHead(500);
+          res.end(JSON.stringify({ error: 'Stripe connection error' }));
+        });
+
+        stripeReq.write(postData);
+        stripeReq.end();
       } catch (e) {
         res.writeHead(400);
         res.end('Invalid JSON');

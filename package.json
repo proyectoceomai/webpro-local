@@ -8,10 +8,26 @@
     "dev": "node server.js",
     "build": "echo 'Static site - no build needed'"
   },
-  "keywords": ["website", "local-business", "stripe"],
+  "keywords": [
+    "website",
+    "local-business",
+    "stripe"
+  ],
   "author": "Manolo CEO",
   "license": "MIT",
   "engines": {
     "node": "20.x"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/proyectoceomai/webpro-local.git"
+  },
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/proyectoceomai/webpro-local/issues"
+  },
+  "homepage": "https://github.com/proyectoceomai/webpro-local#readme",
+  "dependencies": {
+    "stripe": "^20.4.1"
   }
 }
