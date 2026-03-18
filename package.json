@@ -5,12 +5,13 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js"
+    "dev": "node server.js",
+    "build": "echo 'Static site - no build needed'"
   },
   "keywords": ["website", "local-business", "stripe"],
   "author": "Manolo CEO",
   "license": "MIT",
   "engines": {
-    "node": "18.x"
+    "node": "20.x"
   }
 }

@@ -1,5 +1,10 @@
 {
   "version": 2,
+  "buildCommand": "echo 'Static site'",
+  "outputDirectory": ".",
+  "env": {
+    "NODE_VERSION": "20.x"
+  },
   "builds": [
     {
       "src": "index.html",
