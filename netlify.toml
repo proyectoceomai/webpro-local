@@ -1,0 +1,11 @@
+[build]
+  command = "echo 'Static site - no build needed'"
+  publish = "."
+
+[context.production]
+  environment = { NODE_VERSION = "18" }
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
