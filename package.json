@@ -1,0 +1,16 @@
+{
+  "name": "webpro-local",
+  "version": "1.0.0",
+  "description": "Sitios web profesionales para electricistas, plomeros, agentes inmobiliarios",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["website", "local-business", "stripe"],
+  "author": "Manolo CEO",
+  "license": "MIT",
+  "engines": {
+    "node": "18.x"
+  }
+}
