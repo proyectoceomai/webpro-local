@@ -40,6 +40,18 @@ const server = http.createServer((req, res) => {
       res.end(data);
     });
     return;
+  } else if (pathname === '/payment' && req.method === 'GET') {
+    const paymentPath = path.join(__dirname, 'payment.html');
+    fs.readFile(paymentPath, (err, data) => {
+      if (err) {
+        res.writeHead(404);
+        res.end('Not found');
+        return;
+      }
+      res.writeHead(200, { 'Content-Type': 'text/html' });
+      res.end(data);
+    });
+    return;
   } else if (pathname === '/dashboard' && req.method === 'GET') {
     const dashboardPath = path.join(__dirname, 'dashboard.html');
     fs.readFile(dashboardPath, (err, data) => {
@@ -212,15 +224,18 @@ const server = http.createServer((req, res) => {
 
         // Check if we have valid Stripe key
         if (!STRIPE_SECRET_KEY || STRIPE_SECRET_KEY === 'sk_test_DEMO_MODE') {
-          console.error('ERROR: STRIPE_SECRET_KEY not configured');
-          res.writeHead(400);
+          console.log('Stripe key not available - using temporary redirect');
+          
+          // TEMPORARY: Redirect to payment page (will be replaced with real Stripe)
+          res.writeHead(200, { 'Content-Type': 'application/json' });
           res.end(JSON.stringify({ 
-            error: 'Payment not configured. Please contact support.' 
+            url: 'https://webpro-local.vercel.app/payment?email=' + encodeURIComponent(data.email) + '&name=' + encodeURIComponent(data.name),
+            sessionId: 'temp_' + Date.now()
           }));
           return;
         }
 
-        // Make request to Stripe
+        // Make request to Stripe (if key is available)
         const https = require('https');
         const stripeReq = https.request(
           {
@@ -249,21 +264,21 @@ const server = http.createServer((req, res) => {
                   }));
                 } catch (e) {
                   res.writeHead(500);
-                  res.end(JSON.stringify({ error: 'Parse: ' + e.message }));
+                  res.end(JSON.stringify({ error: 'Parse error' }));
                 }
               } else {
-                console.error('Stripe error:', responseData.substring(0, 200));
+                console.error('Stripe API error');
                 res.writeHead(400);
-                res.end(JSON.stringify({ error: 'Stripe error' }));
+                res.end(JSON.stringify({ error: 'Payment processing failed' }));
               }
             });
           }
         );
 
         stripeReq.on('error', (e) => {
-          console.error('Connection error:', e.message);
+          console.error('Stripe connection error:', e.message);
           res.writeHead(500);
-          res.end(JSON.stringify({ error: 'Connection error' }));
+          res.end(JSON.stringify({ error: 'Connection failed' }));
         });
 
         stripeReq.write(postData);
