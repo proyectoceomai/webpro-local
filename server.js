@@ -164,17 +164,22 @@ const server = http.createServer((req, res) => {
         console.log('Checkout requested for:', data);
 
         // Stripe API call to create checkout session
-        const postData = 'payment_method_types=card&' +
-          'line_items[0][price_data][currency]=eur&' +
-          'line_items[0][price_data][product_data][name]=WebPro%20Local%20-%20Plan%20B%C3%A1sico&' +
-          'line_items[0][price_data][unit_amount]=2000&' +
-          'line_items[0][quantity]=1&' +
-          'mode=subscription&' +
-          'success_url=https://webpro-local.vercel.app&' +
-          'cancel_url=https://webpro-local.vercel.app&' +
-          'customer_email=' + encodeURIComponent(data.email || 'test@webpro.local');
+        const params = new URLSearchParams();
+        params.append('payment_method_types[]', 'card');
+        params.append('line_items[0][price_data][currency]', 'eur');
+        params.append('line_items[0][price_data][product_data][name]', 'WebPro Local - Plan Básico');
+        params.append('line_items[0][price_data][unit_amount]', '2000');
+        params.append('line_items[0][quantity]', '1');
+        params.append('mode', 'subscription');
+        params.append('success_url', 'https://webpro-local.vercel.app');
+        params.append('cancel_url', 'https://webpro-local.vercel.app');
+        params.append('customer_email', data.email || 'test@webpro.local');
+        
+        const postData = params.toString();
+        console.log('Stripe payload:', postData);
 
-        const stripeReq = require('https').request(
+        const https = require('https');
+        const stripeReq = https.request(
           {
             hostname: 'api.stripe.com',
             path: '/v1/checkout/sessions',
@@ -182,24 +187,31 @@ const server = http.createServer((req, res) => {
             headers: {
               'Authorization': 'Bearer ' + STRIPE_SECRET_KEY,
               'Content-Type': 'application/x-www-form-urlencoded',
-              'Content-Length': Buffer.byteLength(postData),
-              'User-Agent': 'WebPro-Local/1.0'
+              'Content-Length': Buffer.byteLength(postData)
             }
           },
           (stripeRes) => {
             let responseData = '';
             stripeRes.on('data', chunk => { responseData += chunk; });
             stripeRes.on('end', () => {
-              try {
-                const sessionData = JSON.parse(responseData);
-                res.writeHead(200, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({
-                  sessionId: sessionData.id,
-                  url: sessionData.url
-                }));
-              } catch (e) {
-                res.writeHead(500);
-                res.end(JSON.stringify({ error: 'Stripe error: ' + e.message }));
+              console.log('Stripe response status:', stripeRes.statusCode);
+              
+              if (stripeRes.statusCode === 200) {
+                try {
+                  const sessionData = JSON.parse(responseData);
+                  res.writeHead(200, { 'Content-Type': 'application/json' });
+                  res.end(JSON.stringify({
+                    sessionId: sessionData.id,
+                    url: sessionData.url
+                  }));
+                } catch (e) {
+                  res.writeHead(500);
+                  res.end(JSON.stringify({ error: 'Parse error: ' + e.message }));
+                }
+              } else {
+                console.error('Stripe error:', responseData.substring(0, 300));
+                res.writeHead(400);
+                res.end(JSON.stringify({ error: 'Stripe API error' }));
               }
             });
           }
