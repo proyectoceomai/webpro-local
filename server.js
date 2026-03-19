@@ -104,15 +104,50 @@ const server = http.createServer((req, res) => {
             }
           }
           
-          leads.push({
+          const leadData = {
             ...data,
             timestamp: new Date().toISOString()
-          });
+          };
+          
+          leads.push(leadData);
           
           fs.writeFile(leadsFile, JSON.stringify(leads, null, 2), (err) => {
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ success: true }));
           });
+          
+          // Enviar a Brevo automáticamente
+          if (process.env.BREVO_API_KEY) {
+            const brevoPayload = JSON.stringify({
+              email: data.email,
+              attributes: {
+                FIRSTNAME: data.name,
+                SERVICE: data.service
+              },
+              listIds: [3]
+            });
+            
+            const brevoReq = require('https').request(
+              {
+                hostname: 'api.brevo.com',
+                path: '/v3/contacts',
+                method: 'POST',
+                headers: {
+                  'api-key': process.env.BREVO_API_KEY,
+                  'Content-Type': 'application/json',
+                  'Content-Length': Buffer.byteLength(brevoPayload)
+                }
+              },
+              (brevoRes) => {
+                // Log response but don't block
+                console.log(`Lead ${data.email} sent to Brevo`);
+              }
+            );
+            
+            brevoReq.on('error', (e) => console.error('Brevo sync error:', e));
+            brevoReq.write(brevoPayload);
+            brevoReq.end();
+          }
         });
       } catch (e) {
         res.writeHead(400);
