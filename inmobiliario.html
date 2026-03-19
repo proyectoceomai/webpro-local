@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sitio web profesional para agentes inmobiliarios. Destaca tus propiedades, atrae compradores. Desde €20/mes.">
+    <meta name="keywords" content="sitio web inmobiliario, página web agente inmobiliario, presencia online inmobiliaria">
+    <title>WebPro Local - Tu Sitio Web Profesional | Agentes Inmobiliarios</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; }
+        header { background: linear-gradient(135deg, #2D5016 0%, #4A7C2B 100%); color: white; padding: 60px 20px; text-align: center; }
+        header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+        .hero { text-align: center; margin: 60px 0; }
+        .hero h2 { font-size: 2em; color: #2D5016; margin-bottom: 20px; }
+        .hero p { font-size: 1.1em; color: #666; margin-bottom: 30px; }
+        .benefits { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin: 60px 0; }
+        .benefit { background: #F0F7E8; padding: 25px; border-radius: 8px; text-align: center; border-left: 4px solid #2D5016; }
+        .benefit h3 { color: #2D5016; margin-bottom: 10px; font-size: 1.2em; }
+        .cta-button { display: inline-block; background: #2D5016; color: white; padding: 15px 40px; border: none; border-radius: 5px; font-size: 1.1em; cursor: pointer; transition: background 0.3s; }
+        .cta-button:hover { background: #1F3812; }
+        .pricing { background: #F0F7E8; padding: 40px; border-radius: 8px; text-align: center; margin: 60px 0; }
+        .price-big { font-size: 2.5em; color: #2D5016; font-weight: bold; }
+        .feature-list { text-align: left; max-width: 500px; margin: 30px auto; }
+        .feature-list li { margin: 10px 0; font-size: 1.05em; }
+        .leadmagnet { background: #E8F5E0; padding: 30px; border-radius: 8px; margin: 40px 0; }
+        .leadmagnet h3 { color: #2D5016; margin-bottom: 20px; }
+        .leadmagnet input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #2D5016; border-radius: 5px; font-size: 1em; }
+        footer { background: #333; color: white; text-align: center; padding: 30px; margin-top: 60px; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🏠 WebPro Local para Agentes Inmobiliarios</h1>
+        <p>Tu presencia online profesional en 10 minutos</p>
+    </header>
+    
+    <div class="container">
+        <div class="hero">
+            <h2>Vende más propiedades con una web profesional</h2>
+            <p>El 95% de los compradores buscan propiedades online. ¿Dónde están las tuyas?</p>
+            <button class="cta-button" onclick="document.querySelector('.leadmagnet').scrollIntoView()">Obtén tu web ahora →</button>
+        </div>
+        
+        <div class="benefits">
+            <div class="benefit">
+                <h3>🏡 Catálogo de propiedades</h3>
+                <p>Muestra todas tus listados con fotos y detalles</p>
+            </div>
+            <div class="benefit">
+                <h3>📊 Tasador de valores</h3>
+                <p>Herramienta para estimar valores de propiedades</p>
+            </div>
+            <div class="benefit">
+                <h3>👤 Perfil profesional</h3>
+                <p>Genera confianza con biografía y credenciales</p>
+            </div>
+            <div class="benefit">
+                <h3>📱 Mobile-first</h3>
+                <p>Los compradores buscan desde el móvil</p>
+            </div>
+            <div class="benefit">
+                <h3>🔍 Visible en Google</h3>
+                <p>Aparece en búsquedas locales de propiedades</p>
+            </div>
+            <div class="benefit">
+                <h3>💰 Desde €20/mes</h3>
+                <p>Inversión mínima, máximo retorno</p>
+            </div>
+        </div>
+        
+        <div class="pricing">
+            <h2>Plan Profesional</h2>
+            <div class="price-big">20€<span style="font-size: 0.5em;">/mes</span></div>
+            <ul class="feature-list">
+                <li>✓ Sitio web profesional y moderno</li>
+                <li>✓ Catálogo de hasta 50 propiedades</li>
+                <li>✓ Búsqueda avanzada de inmuebles</li>
+                <li>✓ Formulario de contacto para interesados</li>
+                <li>✓ Mapa interactivo de propiedades</li>
+                <li>✓ SEO optimizado para tu zona</li>
+            </ul>
+            <button class="cta-button" onclick="initStripe('inmobiliario')" style="font-size: 1.3em; padding: 20px 50px;">Comenzar ahora →</button>
+        </div>
+        
+        <div class="leadmagnet">
+            <h3>📥 Checklist gratis: "10 secretos para vender propiedades más rápido online"</h3>
+            <p>+ Video: Cómo posicionar tus propiedades en Google</p>
+            <input type="text" placeholder="Tu nombre" id="name">
+            <input type="email" placeholder="Tu email" id="email">
+            <button class="cta-button" onclick="downloadLead()" style="width: 100%;">Descargar ahora →</button>
+        </div>
+    </div>
+    
+    <footer>
+        <p>&copy; 2026 WebPro Local - Construido para profesionales</p>
+    </footer>
+    
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        function initStripe(service) {
+            const name = document.getElementById('name').value || 'Agente Inmobiliario';
+            const email = document.getElementById('email').value || 'test@webpro.local';
+            
+            fetch('/create-checkout-session', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ plan: 'inmobiliario', email, name, service })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.url) {
+                    window.location.href = data.url;
+                } else {
+                    alert('Error: ' + (data.error || 'No se pudo crear el checkout'));
+                }
+            })
+            .catch(err => alert('Error: ' + err.message));
+        }
+        
+        function downloadLead() {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            
+            if(!name || !email) {
+                alert('Por favor completa nombre y email');
+                return;
+            }
+            
+            fetch('/capture-lead', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, service: 'inmobiliario' })
+            }).catch(err => console.error(err));
+            
+            alert('¡Checklist descargado! Te enviaremos el contenido a: ' + email);
+        }
+    </script>
+</body>
+</html>

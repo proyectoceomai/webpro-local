@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sitio web profesional para plomeros. Atrae clientes, muestra tus trabajos, recibe llamadas. Desde €20/mes.">
+    <meta name="keywords" content="sitio web plomero, página web plomero, presencia online plomero">
+    <title>WebPro Local - Tu Sitio Web Profesional | Plomeros</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; }
+        header { background: linear-gradient(135deg, #0066CC 0%, #0052A3 100%); color: white; padding: 60px 20px; text-align: center; }
+        header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+        .hero { text-align: center; margin: 60px 0; }
+        .hero h2 { font-size: 2em; color: #0066CC; margin-bottom: 20px; }
+        .hero p { font-size: 1.1em; color: #666; margin-bottom: 30px; }
+        .benefits { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin: 60px 0; }
+        .benefit { background: #f0f4ff; padding: 25px; border-radius: 8px; text-align: center; border-left: 4px solid #0066CC; }
+        .benefit h3 { color: #0066CC; margin-bottom: 10px; font-size: 1.2em; }
+        .cta-button { display: inline-block; background: #0066CC; color: white; padding: 15px 40px; border: none; border-radius: 5px; font-size: 1.1em; cursor: pointer; transition: background 0.3s; }
+        .cta-button:hover { background: #0052A3; }
+        .pricing { background: #f0f4ff; padding: 40px; border-radius: 8px; text-align: center; margin: 60px 0; }
+        .price-big { font-size: 2.5em; color: #0066CC; font-weight: bold; }
+        .feature-list { text-align: left; max-width: 500px; margin: 30px auto; }
+        .feature-list li { margin: 10px 0; font-size: 1.05em; }
+        .leadmagnet { background: #E6F2FF; padding: 30px; border-radius: 8px; margin: 40px 0; }
+        .leadmagnet h3 { color: #0066CC; margin-bottom: 20px; }
+        .leadmagnet input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #0066CC; border-radius: 5px; font-size: 1em; }
+        footer { background: #333; color: white; text-align: center; padding: 30px; margin-top: 60px; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🔧 WebPro Local para Plomeros</h1>
+        <p>Tu presencia online profesional en 10 minutos</p>
+    </header>
+    
+    <div class="container">
+        <div class="hero">
+            <h2>Los clientes buscan plomeros en Google. ¿Te encuentran?</h2>
+            <p>El 92% de las reparaciones de fontanería comienzan con una búsqueda online.</p>
+            <button class="cta-button" onclick="document.querySelector('.leadmagnet').scrollIntoView()">Obtén tu web ahora →</button>
+        </div>
+        
+        <div class="benefits">
+            <div class="benefit">
+                <h3>📸 Portfolio visual</h3>
+                <p>Muestra antes y después de tus trabajos</p>
+            </div>
+            <div class="benefit">
+                <h3>📞 Contacto directo</h3>
+                <p>Recibe solicitudes sin intermediarios</p>
+            </div>
+            <div class="benefit">
+                <h3>⭐ Reputación online</h3>
+                <p>Solicitudes de clientes con confianza comprobada</p>
+            </div>
+            <div class="benefit">
+                <h3>📱 Responsive design</h3>
+                <p>Funciona perfecto en móvil (donde buscan tus clientes)</p>
+            </div>
+            <div class="benefit">
+                <h3>🗺️ Zona de servicio</h3>
+                <p>Muestra dónde trabajas</p>
+            </div>
+            <div class="benefit">
+                <h3>💰 Precio justo</h3>
+                <p>€20/mes. Sin contratos. Cancela cuando quieras</p>
+            </div>
+        </div>
+        
+        <div class="pricing">
+            <h2>Plan Completo</h2>
+            <div class="price-big">20€<span style="font-size: 0.5em;">/mes</span></div>
+            <ul class="feature-list">
+                <li>✓ Sitio web 100% profesional y personalizado</li>
+                <li>✓ Galería de fotos de trabajos realizados</li>
+                <li>✓ Formulario de presupuesto/contacto</li>
+                <li>✓ Mapa interactivo de zonas de servicio</li>
+                <li>✓ SEO básico para tu zona geográfica</li>
+                <li>✓ Soporte técnico ilimitado</li>
+            </ul>
+            <button class="cta-button" onclick="initStripe('plomero')" style="font-size: 1.3em; padding: 20px 50px;">Comenzar ahora →</button>
+        </div>
+        
+        <div class="leadmagnet">
+            <h3>📥 Guía gratis: "7 errores que pierden clientes en la web de un plomero"</h3>
+            <p>+ Acceso a 3 emails de estrategia de marketing</p>
+            <input type="text" placeholder="Tu nombre" id="name">
+            <input type="email" placeholder="Tu email" id="email">
+            <button class="cta-button" onclick="downloadLead()" style="width: 100%;">Descargar guía →</button>
+        </div>
+    </div>
+    
+    <footer>
+        <p>&copy; 2026 WebPro Local - Construido para profesionales</p>
+    </footer>
+    
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        function initStripe(service) {
+            const name = document.getElementById('name').value || 'Plomero';
+            const email = document.getElementById('email').value || 'test@webpro.local';
+            
+            fetch('/create-checkout-session', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ plan: 'plomero', email, name, service })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.url) {
+                    window.location.href = data.url;
+                } else {
+                    alert('Error: ' + (data.error || 'No se pudo crear el checkout'));
+                }
+            })
+            .catch(err => alert('Error: ' + err.message));
+        }
+        
+        function downloadLead() {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            
+            if(!name || !email) {
+                alert('Por favor completa nombre y email');
+                return;
+            }
+            
+            fetch('/capture-lead', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, service: 'plomero' })
+            }).catch(err => console.error(err));
+            
+            alert('¡Guía descargada! Te enviaremos los emails a: ' + email);
+        }
+    </script>
+</body>
+</html>

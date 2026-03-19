@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sitio web profesional para electricistas. Atrae clientes, muestra tus trabajos, recibe llamadas. Desde €20/mes.">
+    <meta name="keywords" content="sitio web electricista, página web electricista, presencia online electricista">
+    <title>WebPro Local - Tu Sitio Web Profesional | Electricistas</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; }
+        header { background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%); color: white; padding: 60px 20px; text-align: center; }
+        header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+        .hero { text-align: center; margin: 60px 0; }
+        .hero h2 { font-size: 2em; color: #FF6B35; margin-bottom: 20px; }
+        .hero p { font-size: 1.1em; color: #666; margin-bottom: 30px; }
+        .benefits { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin: 60px 0; }
+        .benefit { background: #f8f9fa; padding: 25px; border-radius: 8px; text-align: center; border-left: 4px solid #FF6B35; }
+        .benefit h3 { color: #FF6B35; margin-bottom: 10px; font-size: 1.2em; }
+        .cta-button { display: inline-block; background: #FF6B35; color: white; padding: 15px 40px; border: none; border-radius: 5px; font-size: 1.1em; cursor: pointer; transition: background 0.3s; margin: 20px 10px; }
+        .cta-button:hover { background: #E55A2B; }
+        .pricing { background: #f8f9fa; padding: 40px; border-radius: 8px; text-align: center; margin: 60px 0; }
+        .price-big { font-size: 2.5em; color: #FF6B35; font-weight: bold; }
+        .feature-list { text-align: left; max-width: 500px; margin: 30px auto; }
+        .feature-list li { margin: 10px 0; font-size: 1.05em; }
+        .leadmagnet { background: #FFF3E0; padding: 30px; border-radius: 8px; margin: 40px 0; }
+        .leadmagnet h3 { color: #FF6B35; margin-bottom: 20px; }
+        .leadmagnet input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; font-size: 1em; }
+        footer { background: #333; color: white; text-align: center; padding: 30px; margin-top: 60px; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>⚡ WebPro Local para Electricistas</h1>
+        <p>Tu presencia online profesional en 10 minutos</p>
+    </header>
+    
+    <div class="container">
+        <div class="hero">
+            <h2>Deja de perder clientes por no tener web</h2>
+            <p>El 89% de tus posibles clientes buscan electricistas en Google. ¿Dónde estás tú?</p>
+            <button class="cta-button" onclick="document.querySelector('.leadmagnet').scrollIntoView()">Obtén tu web ahora →</button>
+        </div>
+        
+        <div class="benefits">
+            <div class="benefit">
+                <h3>📸 Galería de trabajos</h3>
+                <p>Muestra tus mejores instalaciones y trabajos realizados</p>
+            </div>
+            <div class="benefit">
+                <h3>📞 Leads directo</h3>
+                <p>Recibe solicitudes de clientes sin intermediarios</p>
+            </div>
+            <div class="benefit">
+                <h3>⭐ Reseñas y testimonios</h3>
+                <p>Construye confianza con opiniones de clientes reales</p>
+            </div>
+            <div class="benefit">
+                <h3>📱 100% Mobile</h3>
+                <p>Tus clientes te encuentran desde el móvil</p>
+            </div>
+            <div class="benefit">
+                <h3>🔍 SEO básico</h3>
+                <p>Aparece en Google para tu zona geográfica</p>
+            </div>
+            <div class="benefit">
+                <h3>💰 €20/mes</h3>
+                <p>Sin contrato, sin sorpresas, cancela cuando quieras</p>
+            </div>
+        </div>
+        
+        <div class="pricing">
+            <h2>Precio Simple</h2>
+            <div class="price-big">20€<span style="font-size: 0.5em;">/mes</span></div>
+            <ul class="feature-list">
+                <li>✓ Sitio web profesional completamente personalizado</li>
+                <li>✓ Galería de fotos de tus trabajos</li>
+                <li>✓ Formulario de contacto integrado</li>
+                <li>✓ Mapa de tu zona de servicio</li>
+                <li>✓ Optimizado para Google</li>
+                <li>✓ Soporte por email ilimitado</li>
+            </ul>
+            <button class="cta-button" onclick="initStripe('electricista')" style="font-size: 1.3em; padding: 20px 50px;">Comenzar ahora →</button>
+        </div>
+        
+        <div class="leadmagnet">
+            <h3>📥 Descarga gratis: Checklist de 10 elementos que TODO electricista necesita en su web</h3>
+            <p>+ Recibirás 3 emails con tips para atraer más clientes</p>
+            <input type="text" placeholder="Tu nombre" id="name">
+            <input type="email" placeholder="Tu email" id="email">
+            <button class="cta-button" onclick="downloadLead()" style="width: 100%;">Descargar PDF →</button>
+        </div>
+    </div>
+    
+    <footer>
+        <p>&copy; 2026 WebPro Local - Construido para profesionales</p>
+    </footer>
+    
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        function initStripe(service) {
+            const name = document.getElementById('name').value || 'Electricista';
+            const email = document.getElementById('email').value || 'test@webpro.local';
+            
+            fetch('/create-checkout-session', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ plan: 'electricista', email, name, service })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if(data.url) {
+                    window.location.href = data.url;
+                } else {
+                    alert('Error: ' + (data.error || 'No se pudo crear el checkout'));
+                }
+            })
+            .catch(err => alert('Error: ' + err.message));
+        }
+        
+        function downloadLead() {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            
+            if(!name || !email) {
+                alert('Por favor completa nombre y email');
+                return;
+            }
+            
+            // Enviar lead a backend (para guardar)
+            fetch('/capture-lead', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, service: 'electricista' })
+            }).catch(err => console.error(err));
+            
+            // Descargar PDF simulado
+            alert('¡PDF descargado! Te enviaremos los emails a: ' + email);
+        }
+    </script>
+</body>
+</html>

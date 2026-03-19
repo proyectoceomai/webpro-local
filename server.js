@@ -21,9 +21,14 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  if (pathname === '/' && req.method === 'GET') {
-    const indexPath = path.join(__dirname, 'index.html');
-    fs.readFile(indexPath, (err, data) => {
+  if (req.method === 'GET' && (pathname === '/' || pathname === '/electricista' || pathname === '/plomero' || pathname === '/inmobiliario')) {
+    let htmlFile = 'index.html';
+    if (pathname === '/electricista') htmlFile = 'electricista.html';
+    else if (pathname === '/plomero') htmlFile = 'plomero.html';
+    else if (pathname === '/inmobiliario') htmlFile = 'inmobiliario.html';
+    
+    const filePath = path.join(__dirname, htmlFile);
+    fs.readFile(filePath, (err, data) => {
       if (err) {
         res.writeHead(404);
         res.end('Not found');
@@ -32,6 +37,42 @@ const server = http.createServer((req, res) => {
       res.writeHead(200, { 'Content-Type': 'text/html' });
       res.end(data);
     });
+    return;
+  } else if (pathname === '/capture-lead' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', () => {
+      try {
+        const data = JSON.parse(body);
+        
+        // Guardar lead en archivo JSON
+        const leadsFile = path.join(__dirname, 'leads.json');
+        fs.readFile(leadsFile, (err, fileData) => {
+          let leads = [];
+          if (!err && fileData) {
+            try {
+              leads = JSON.parse(fileData);
+            } catch(e) {
+              leads = [];
+            }
+          }
+          
+          leads.push({
+            ...data,
+            timestamp: new Date().toISOString()
+          });
+          
+          fs.writeFile(leadsFile, JSON.stringify(leads, null, 2), (err) => {
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify({ success: true }));
+          });
+        });
+      } catch (e) {
+        res.writeHead(400);
+        res.end('Invalid request');
+      }
+    });
+    return;
   } else if (pathname === '/create-checkout-session' && req.method === 'POST') {
     let body = '';
     req.on('data', chunk => { body += chunk; });
