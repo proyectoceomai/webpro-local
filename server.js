@@ -164,24 +164,15 @@ const server = http.createServer((req, res) => {
         console.log('Checkout requested for:', data);
 
         // Stripe API call to create checkout session
-        const postData = JSON.stringify({
-          payment_method_types: ['card'],
-          line_items: [{
-            price_data: {
-              currency: 'eur',
-              product_data: {
-                name: 'WebPro Local - Plan Básico',
-                description: 'Sitio web profesional para tu negocio'
-              },
-              unit_amount: 2000 // $20 en centavos
-            },
-            quantity: 1
-          }],
-          mode: 'subscription',
-          success_url: 'https://webpro-local.vercel.app?session_id={CHECKOUT_SESSION_ID}',
-          cancel_url: 'https://webpro-local.vercel.app',
-          customer_email: data.email || 'cliente@webpro.local'
-        });
+        const postData = 'payment_method_types=card&' +
+          'line_items[0][price_data][currency]=eur&' +
+          'line_items[0][price_data][product_data][name]=WebPro%20Local%20-%20Plan%20B%C3%A1sico&' +
+          'line_items[0][price_data][unit_amount]=2000&' +
+          'line_items[0][quantity]=1&' +
+          'mode=subscription&' +
+          'success_url=https://webpro-local.vercel.app&' +
+          'cancel_url=https://webpro-local.vercel.app&' +
+          'customer_email=' + encodeURIComponent(data.email || 'test@webpro.local');
 
         const stripeReq = require('https').request(
           {
@@ -191,7 +182,8 @@ const server = http.createServer((req, res) => {
             headers: {
               'Authorization': 'Bearer ' + STRIPE_SECRET_KEY,
               'Content-Type': 'application/x-www-form-urlencoded',
-              'Content-Length': Buffer.byteLength(postData)
+              'Content-Length': Buffer.byteLength(postData),
+              'User-Agent': 'WebPro-Local/1.0'
             }
           },
           (stripeRes) => {
