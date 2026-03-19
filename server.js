@@ -21,11 +21,12 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  if (req.method === 'GET' && (pathname === '/' || pathname === '/electricista' || pathname === '/plomero' || pathname === '/inmobiliario')) {
+  if (req.method === 'GET' && (pathname === '/' || pathname === '/electricista' || pathname === '/plomero' || pathname === '/inmobiliario' || pathname === '/blog')) {
     let htmlFile = 'index.html';
     if (pathname === '/electricista') htmlFile = 'electricista.html';
     else if (pathname === '/plomero') htmlFile = 'plomero.html';
     else if (pathname === '/inmobiliario') htmlFile = 'inmobiliario.html';
+    else if (pathname === '/blog') htmlFile = 'blog.html';
     
     const filePath = path.join(__dirname, htmlFile);
     fs.readFile(filePath, (err, data) => {
