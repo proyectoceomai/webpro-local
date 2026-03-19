@@ -434,38 +434,61 @@
         <p>&copy; 2026 WebPro Local. Construido para profesionales que quieren vender más.</p>
     </footer>
     
-    <script src="https://js.stripe.com/v3/"></script>
     <script>
         function submitForm(e) {
             e.preventDefault();
             
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
+            const nameInput = document.getElementById('name');
+            const emailInput = document.getElementById('email');
             
-            if (!name || !email) {
-                alert('Por favor completa todos los campos');
+            const name = nameInput.value.trim();
+            const email = emailInput.value.trim();
+            
+            // Simple validation
+            if (name.length === 0) {
+                alert('Por favor ingresa tu nombre');
                 return false;
             }
             
+            if (email.length === 0 || email.indexOf('@') === -1) {
+                alert('Por favor ingresa un email válido');
+                return false;
+            }
+            
+            // Disable button and show loading
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = 'Procesando...';
+            
             // Call checkout
+            const payload = JSON.stringify({ 
+                plan: 'basico',
+                email: email,
+                name: name
+            });
+            
             fetch('/create-checkout-session', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    plan: 'basico',
-                    email: email,
-                    name: name
-                })
+                body: payload
             })
-            .then(res => res.json())
-            .then(data => {
+            .then(function(res) {
+                return res.json();
+            })
+            .then(function(data) {
                 if (data.url) {
                     window.location.href = data.url;
                 } else {
                     alert('Error: ' + (data.error || 'No se pudo procesar'));
+                    btn.disabled = false;
+                    btn.textContent = 'Siguiente →';
                 }
             })
-            .catch(err => alert('Error: ' + err.message));
+            .catch(function(err) {
+                alert('Error de conexión: ' + err.message);
+                btn.disabled = false;
+                btn.textContent = 'Siguiente →';
+            });
             
             return false;
         }
