@@ -1,0 +1,48 @@
+<!-- Google Analytics 4 Script -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-XXXXX');
+  
+  // Custom events tracking
+  function trackEvent(eventName, data) {
+    gtag('event', eventName, data);
+  }
+  
+  // Track page view by service
+  function trackServiceView(service) {
+    trackEvent('service_view', {
+      'service': service,
+      'page_path': window.location.pathname
+    });
+  }
+  
+  // Track lead capture
+  function trackLead(service, email) {
+    trackEvent('lead_captured', {
+      'service': service,
+      'email_captured': true,
+      'timestamp': new Date().toISOString()
+    });
+  }
+  
+  // Track checkout initiation
+  function trackCheckout(service, email) {
+    trackEvent('checkout_started', {
+      'service': service,
+      'email': email,
+      'timestamp': new Date().toISOString()
+    });
+  }
+  
+  // Track checkout completion
+  function trackCheckoutComplete(service, sessionId) {
+    trackEvent('checkout_completed', {
+      'service': service,
+      'session_id': sessionId,
+      'timestamp': new Date().toISOString()
+    });
+  }
+</script>

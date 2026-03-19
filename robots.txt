@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Allow: /electricista
+Allow: /plomero
+Allow: /inmobiliario
+Disallow: /api/
+Disallow: /dashboard
+
+Sitemap: https://webpro-local.vercel.app/sitemap.xml

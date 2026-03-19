@@ -38,6 +38,51 @@ const server = http.createServer((req, res) => {
       res.end(data);
     });
     return;
+  } else if (pathname === '/dashboard' && req.method === 'GET') {
+    const dashboardPath = path.join(__dirname, 'dashboard.html');
+    fs.readFile(dashboardPath, (err, data) => {
+      if (err) {
+        res.writeHead(404);
+        res.end('Not found');
+        return;
+      }
+      res.writeHead(200, { 'Content-Type': 'text/html' });
+      res.end(data);
+    });
+    return;
+  } else if (pathname === '/sitemap.xml' && req.method === 'GET') {
+    const sitemapPath = path.join(__dirname, 'sitemap.xml');
+    fs.readFile(sitemapPath, (err, data) => {
+      res.writeHead(200, { 'Content-Type': 'application/xml' });
+      if (err) {
+        res.end('<?xml version="1.0"?><urlset></urlset>');
+      } else {
+        res.end(data);
+      }
+    });
+    return;
+  } else if (pathname === '/robots.txt' && req.method === 'GET') {
+    const robotsPath = path.join(__dirname, 'robots.txt');
+    fs.readFile(robotsPath, (err, data) => {
+      res.writeHead(200, { 'Content-Type': 'text/plain' });
+      if (err) {
+        res.end('User-agent: *\nAllow: /');
+      } else {
+        res.end(data);
+      }
+    });
+    return;
+  } else if (pathname === '/api/leads' && req.method === 'GET') {
+    const leadsFile = path.join(__dirname, 'leads.json');
+    fs.readFile(leadsFile, (err, data) => {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      if (err) {
+        res.end(JSON.stringify([]));
+      } else {
+        res.end(data);
+      }
+    });
+    return;
   } else if (pathname === '/capture-lead' && req.method === 'POST') {
     let body = '';
     req.on('data', chunk => { body += chunk; });
