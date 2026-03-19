@@ -155,6 +155,15 @@ const server = http.createServer((req, res) => {
       }
     });
     return;
+  } else if (pathname === '/test-stripe-key' && req.method === 'GET') {
+    // DEBUG: Check if Stripe key is available
+    const keyStatus = STRIPE_SECRET_KEY && STRIPE_SECRET_KEY !== 'sk_test_DEMO_MODE' ? 'OK' : 'MISSING';
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ 
+      stripe_key_status: keyStatus,
+      key_prefix: STRIPE_SECRET_KEY ? STRIPE_SECRET_KEY.substring(0, 10) : 'N/A'
+    }));
+    return;
   } else if (pathname === '/create-checkout-session' && req.method === 'POST') {
     let body = '';
     req.on('data', chunk => { body += chunk; });
@@ -176,8 +185,42 @@ const server = http.createServer((req, res) => {
         params.append('customer_email', data.email || 'test@webpro.local');
         
         const postData = params.toString();
-        console.log('Stripe payload:', postData);
+        console.log('Checkout request:', data.email, data.name);
 
+        // Save lead to JSON
+        const leadsFile = path.join(__dirname, 'leads.json');
+        fs.readFile(leadsFile, (err, fileData) => {
+          let leads = [];
+          if (!err && fileData) {
+            try {
+              leads = JSON.parse(fileData);
+            } catch(e) {}
+          }
+          
+          const leadData = {
+            email: data.email,
+            name: data.name,
+            plan: data.plan,
+            timestamp: new Date().toISOString()
+          };
+          
+          leads.push(leadData);
+          fs.writeFile(leadsFile, JSON.stringify(leads, null, 2), () => {
+            console.log('Lead saved:', leadData.email);
+          });
+        });
+
+        // Check if we have valid Stripe key
+        if (!STRIPE_SECRET_KEY || STRIPE_SECRET_KEY === 'sk_test_DEMO_MODE') {
+          console.error('ERROR: STRIPE_SECRET_KEY not configured');
+          res.writeHead(400);
+          res.end(JSON.stringify({ 
+            error: 'Payment not configured. Please contact support.' 
+          }));
+          return;
+        }
+
+        // Make request to Stripe
         const https = require('https');
         const stripeReq = https.request(
           {
@@ -194,7 +237,7 @@ const server = http.createServer((req, res) => {
             let responseData = '';
             stripeRes.on('data', chunk => { responseData += chunk; });
             stripeRes.on('end', () => {
-              console.log('Stripe response status:', stripeRes.statusCode);
+              console.log('Stripe response:', stripeRes.statusCode);
               
               if (stripeRes.statusCode === 200) {
                 try {
@@ -206,21 +249,21 @@ const server = http.createServer((req, res) => {
                   }));
                 } catch (e) {
                   res.writeHead(500);
-                  res.end(JSON.stringify({ error: 'Parse error: ' + e.message }));
+                  res.end(JSON.stringify({ error: 'Parse: ' + e.message }));
                 }
               } else {
-                console.error('Stripe error:', responseData.substring(0, 300));
+                console.error('Stripe error:', responseData.substring(0, 200));
                 res.writeHead(400);
-                res.end(JSON.stringify({ error: 'Stripe API error' }));
+                res.end(JSON.stringify({ error: 'Stripe error' }));
               }
             });
           }
         );
 
         stripeReq.on('error', (e) => {
-          console.error('Stripe API error:', e);
+          console.error('Connection error:', e.message);
           res.writeHead(500);
-          res.end(JSON.stringify({ error: 'Stripe connection error' }));
+          res.end(JSON.stringify({ error: 'Connection error' }));
         });
 
         stripeReq.write(postData);
